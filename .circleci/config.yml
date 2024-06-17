@@ -1,0 +1,60 @@
+# Couldn't automatically generate a config from your source code.
+# This is a generic template to serve as a base for your custom config
+# See: https://circleci.com/docs/configuration-reference
+version: 2.1
+jobs:
+  test:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Run unit tests
+          command: ./run_unit_tests.sh  
+      - run:
+          name: Run image loading tests
+          command: ./image_loading_tests.sh
+  build:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Build the project
+          command: ./gradlew build
+      - store_artifacts:
+          path: build/libs
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Deploy the application
+          command: ./deploy.sh
+workflows:
+  example:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+      - deploy:
+          requires:
+            - build
+configuration file
+# Import necessary modules and set up server connection
+import requests
+
+# Generate configuration file
+config_file = generate_config()
+
+# Add the generated configuration file to the server
+response = requests.post(url, data=config_file)
+
+# Check the response status code
+if response.status_code == 200:
+    print("Configuration file added successfully")
+else:
+    print("Failed to add generated config:", response.status_code)
+    print(response.text)  # Print the response text for more information
