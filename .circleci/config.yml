@@ -1,0 +1,45 @@
+# Couldn't automatically generate a config from your source code.
+# This is a generic template to serve as a base for your custom config
+# See: https://circleci.com/docs/configuration-reference
+version: 2.1
+jobs:
+  test:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Run unit tests
+          command: ./run_unit_tests.sh  
+      - run:
+          name: Run image loading tests
+          command: ./image_loading_tests.sh
+  build:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Build the project
+          command: ./gradlew build
+      - store_artifacts:
+          path: build/libs
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Deploy the application
+          command: ./deploy.sh
+workflows:
+  example:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+      - deploy:
+          requires:
+            - build
+
