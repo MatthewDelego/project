@@ -1,5 +1,5 @@
 # Use an Ubuntu 20.04 base for our staging server
-FROM vm/ubuntu:20.04
+FROM ubuntu:20.04
 
 # Set non-interactive installation mode
 ENV DEBIAN_FRONTEND=noninteractive
