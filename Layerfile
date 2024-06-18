@@ -11,9 +11,6 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
 # Check Node and npm versions
 RUN node -v && npm -v
 
-# Install Jest and Puppeteer for JavaScript testing
-RUN npm install --global jest puppeteer
-
 # Copy the repository contents to the VM
 COPY . .
 
