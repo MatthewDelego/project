@@ -4,8 +4,8 @@ FROM vm/ubuntu:18.04
 # Install Python and necessary tools
 RUN apt-get update && apt-get install -y python3 curl
 
-# Install an older version of Node.js that is compatible with Ubuntu 18.04
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+# Install Node.js
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
 # Check Node and npm versions
