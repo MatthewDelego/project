@@ -1,24 +1,22 @@
-#Use an Ubuntu 18.04 base for our staging server
+# Use an Ubuntu 18.04 base for our staging server
 FROM vm/ubuntu:18.04
 
-# To note: Layerfiles create entire VMs, *not* containers!
+# Install Node.js and npm
+RUN apt-get update && apt-get install -y nodejs npm
 
-# Install python
-RUN apt-get update && apt-get install python3
+# Install Python and other dependencies
+RUN apt-get install -y python3 python3-pip
 
-# Create some files
-RUN echo '<b>some html</b>' > hello.html
-RUN echo '<b>another file</b>' > another.html
+# Install testing libraries
+RUN npm install --global jest puppeteer
 
-# You could also install & start a database:
-# RUN apt-get update && apt-get install postgresql
-
-# This line copies the repository to /root in the runner
+# Copy the repository contents to the VM
 COPY . .
-RUN ls
 
-# Expose the webserver in the staging server as a secure link.
-# Whenever someone clicks the link, we'll load this staging server and forward
-# their requests to it.
+# Run JavaScript tests
+RUN jest
+
+# Optional: Start the server in the background if still needed
 RUN BACKGROUND python3 -m http.server 80
 EXPOSE WEBSITE http://localhost:80
+
