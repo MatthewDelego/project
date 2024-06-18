@@ -1,5 +1,5 @@
-# Use an Ubuntu 18.04 base for our staging server
-FROM vm/ubuntu:18.04
+# Use an Ubuntu 20.04 base for our staging server
+FROM ubuntu:20.04
 
 # Install Python and necessary tools
 RUN apt-get update && apt-get install -y python3 curl
