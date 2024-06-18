@@ -1,26 +1,26 @@
 # Use an Ubuntu 18.04 base for our staging server
 FROM vm/ubuntu:18.04
 
-# Install Python and necessary tools
-RUN apt-get update && apt-get install -y python3 curl
+# Install Python
+RUN apt-get update && apt-get install -y python3
 
-# Install an older version of Node.js that is compatible with Ubuntu 18.04
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+# Install the required Node.js version
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
-# Check Node and npm versions
+# Verify the installation
 RUN node -v && npm -v
 
-# Install Jest and Puppeteer for JavaScript testing
-RUN npm install --global jest puppeteer
+# Install Jest and Puppeteer
+RUN npm install -g jest@latest puppeteer@latest
 
-# Copy the repository contents to the VM
-COPY . .
-
-# Create some test HTML files
+# Create some files
 RUN echo '<b>some html</b>' > hello.html
 RUN echo '<b>another file</b>' > another.html
 
-# Optional: Start a simple Python web server in the background
+# Copy the repository contents
+COPY . .
+
+# Expose a Python simple server
 RUN BACKGROUND python3 -m http.server 80
 EXPOSE WEBSITE http://localhost:80
