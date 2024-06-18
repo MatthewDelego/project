@@ -7,8 +7,8 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install Python and necessary tools
 RUN apt-get update && apt-get install -y python3 curl
 
-# Install an older version of Node.js that is compatible with Ubuntu 18.04
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+# Install Node.js 16.x which is compatible with Puppeteer
+RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get install -y nodejs
 
 # Install libraries needed for Puppeteer to run in a headless environment
@@ -26,8 +26,32 @@ COPY . /var/www/html
 # Install Puppeteer locally in the project directory
 RUN npm install puppeteer
 
-# Run the image load test script
-RUN node imageLoadTest.js
+# Run the image load test script with no-sandbox option for Puppeteer
+RUN node -e "const puppeteer = require('puppeteer'); \
+    (async () => { \
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] }); \
+        const page = await browser.newPage(); \
+        await page.goto('http://localhost:80'); \
+        const images = await page.evaluate(() => { \
+            const imgs = Array.from(document.querySelectorAll('img')); \
+            return imgs.map(img => ({ \
+                src: img.src, \
+                loaded: img.complete && img.naturalHeight !== 0 \
+            })); \
+        }); \
+        console.log('Image Load Test Results:'); \
+        images.forEach(img => { \
+            console.log(`${img.src} - Loaded: ${img.loaded}`); \
+        }); \
+        await browser.close(); \
+        const allLoaded = images.every(img => img.loaded); \
+        if (!allLoaded) { \
+            throw new Error('One or more images failed to load.'); \
+        } \
+    })().catch(error => { \
+        console.error(error); \
+        process.exit(1); \
+    });"
 
 # Optional: Start a simple Python web server in the background
 RUN BACKGROUND python3 -m http.server 80
