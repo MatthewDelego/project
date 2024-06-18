@@ -4,11 +4,11 @@ FROM vm/ubuntu:18.04
 # Install Python and necessary tools
 RUN apt-get update && apt-get install -y python3 curl
 
-# Install an older version of Node.js that is compatible with Ubuntu 18.04
+# Install Node.js compatible with Ubuntu 18.04
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get install -y nodejs
 
-# Check Node and npm versions
+# Verify Node.js and npm versions
 RUN node -v && npm -v
 
 # Install Jest and Puppeteer for JavaScript testing
@@ -17,10 +17,13 @@ RUN npm install --global jest puppeteer
 # Copy the repository contents to the VM
 COPY . .
 
-# Create some test HTML files
+# Create test HTML files
 RUN echo '<b>some html</b>' > hello.html
 RUN echo '<b>another file</b>' > another.html
 
-# Optional: Start a simple Python web server in the background
+# Background a simple Python web server
 RUN BACKGROUND python3 -m http.server 80
+
+# Ensure the web server port is exposed
 EXPOSE WEBSITE http://localhost:80
+
