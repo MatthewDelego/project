@@ -21,7 +21,8 @@ WORKDIR /var/www/html
 COPY . /var/www/html
 
 # Install Puppeteer locally in the project directory
-RUN npm install puppeteer
+RUN npm install puppeteer@2.1.1
+
 
 # Run the image load test script
 RUN node imageLoadTest.js
