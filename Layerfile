@@ -12,12 +12,16 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
 RUN node -v && npm -v
 
 # Copy the repository contents to the VM
-COPY . .
+COPY . /var/www/html
 
-# Create some test HTML files
-RUN echo '<b>some html</b>' > hello.html
-RUN echo '<b>another file</b>' > another.html
+# Create some test HTML files in the web server directory
+RUN echo '<b>some html</b>' > /var/www/html/hello.html
+RUN echo '<b>another file</b>' > /var/www/html/another.html
 
-# Optional: Start a simple Python web server in the background
+# Change to the web server directory and start a simple Python web server in the background
+WORKDIR /var/www/html
 RUN BACKGROUND python3 -m http.server 80
+
+# Expose the website
 EXPOSE WEBSITE http://localhost:80
+
