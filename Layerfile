@@ -59,6 +59,34 @@ RUN node -e "const puppeteer = require('puppeteer'); \
         process.exit(1); \
     });"
 
+# Add link test script with no-sandbox option for Puppeteer
+RUN node -e "const puppeteer = require('puppeteer'); \
+    (async () => { \
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] }); \
+        const page = await browser.newPage(); \
+        await page.goto('http://localhost:80'); \
+        const links = await page.evaluate(() => { \
+            return Array.from(document.querySelectorAll('a')).map(a => a.href); \
+        }); \
+        console.log('Link Test Results:'); \
+        for (const link of links) { \
+            try { \
+                const response = await page.goto(link); \
+                console.log(`${link} - Status: ${response.status()}`); \
+                if (response.status() >= 400) { \
+                    throw new Error(`${link} returned status ${response.status()}`); \
+                } \
+            } catch (error) { \
+                console.error(`Error with link ${link}: ${error.message}`); \
+                throw error; \
+            } \
+        } \
+        await browser.close(); \
+    })().catch(error => { \
+        console.error(error); \
+        process.exit(1); \
+    });"
+
 # Expose port 80 for the web server
 EXPOSE WEBSITE 80
 
