@@ -59,6 +59,9 @@ RUN node -e "const puppeteer = require('puppeteer'); \
         process.exit(1); \
     });"
 
+# Expose port 80 for the web server
+EXPOSE WEBSITE 80
+
 # Add debugging step to log page content
 RUN node -e "const puppeteer = require('puppeteer'); \
     (async () => { \
@@ -72,6 +75,3 @@ RUN node -e "const puppeteer = require('puppeteer'); \
         console.error(error); \
         process.exit(1); \
     });"
-
-# Expose port 80 for the web server
-EXPOSE WEBSITE 80
