@@ -1,10 +1,13 @@
-# Use an Ubuntu 18.04 base for our staging server
-FROM vm/ubuntu:18.04
+# Use an Ubuntu 20.04 base for our staging server
+FROM vm/ubuntu:20.04
+
+# Set non-interactive installation mode
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Python and necessary tools
 RUN apt-get update && apt-get install -y python3 curl
 
-# Install Node.js and Puppeteer dependencies
+# Install Node.js 16.x and Puppeteer dependencies
 RUN curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get install -y nodejs
 
