@@ -60,4 +60,4 @@ RUN node -e "const puppeteer = require('puppeteer'); \
     });"
 
 # Expose port 80 for the web server
-EXPOSE 80
+EXPOSE WEBSITE 80
