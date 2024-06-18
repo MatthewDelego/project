@@ -1,5 +1,5 @@
 # Use an Ubuntu 20.04 base for our staging server
-FROM ubuntu:20.04
+FROM vm/ubuntu:20.04
 
 # Install Python, curl, and other necessary tools
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -40,3 +40,4 @@ RUN BACKGROUND python3 -m http.server 80
 
 # Expose the website
 EXPOSE WEBSITE http://localhost:80
+
