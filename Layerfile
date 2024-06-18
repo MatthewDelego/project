@@ -70,7 +70,7 @@ RUN node -e "const puppeteer = require('puppeteer'); \
         }); \
         console.log('Link Test Results:'); \
         for (const link of links) { \
-            if (link.startsWith('http://localhost')) { \
+            if (link.startsWith('http://localhost') && !link.includes('#')) { \
                 try { \
                     const response = await page.goto(link); \
                     console.log(link + ' - Status: ' + response.status()); \
@@ -82,7 +82,7 @@ RUN node -e "const puppeteer = require('puppeteer'); \
                     throw error; \
                 } \
             } else { \
-                console.log('Skipping external link: ' + link); \
+                console.log('Skipping external or fragment link: ' + link); \
             } \
         } \
         await browser.close(); \
