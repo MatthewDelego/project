@@ -12,7 +12,13 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
 RUN node -v && npm -v
 
 # Copy the repository contents to the VM
-COPY . .
+COPY . /var/www/html
+
+# Install dependencies for running Puppeteer tests
+RUN npm install
+
+# Run the image load test
+RUN node imageLoadTest.js
 
 # Create some test HTML files
 RUN echo '<b>some html</b>' > hello.html
