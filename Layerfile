@@ -1,18 +1,41 @@
 # Use an Ubuntu 20.04 base for our staging server
 FROM ubuntu:20.04
 
-# Install Python and necessary tools
-RUN apt-get update && apt-get install -y python3 curl
+# Avoid prompts from apt-get during build
+ARG DEBIAN_FRONTEND=noninteractive
 
-# Install Node.js and Puppeteer dependencies
+# Install Python, curl, and other necessary tools
+RUN apt-get update && apt-get install -y \
+    python3 \
+    curl \
+    wget \
+    --no-install-recommends 
+
+# Install Node.js (this setup script will install Node.js version 18)
 RUN curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
-# Install libraries needed for Puppeteer to run in a headless environment
-RUN apt-get install -y wget --no-install-recommends && \
-    apt-get install -y libx11-xcb1 libxcomposite1 libxcursor1 libxdamage1 libxi6 \
-    libxtst6 libcups2 libxss1 libxrandr2 libasound2 libpangocairo-1.0-0 libatk1.0-0 \
-    libatk-bridge2.0-0 libgtk-3-0
+# Install the necessary libraries for Puppeteer to run in a headless environment
+RUN apt-get install -y \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxi6 \
+    libxtst6 \
+    libcups2 \
+    libxss1 \
+    libxrandr2 \
+    libasound2 \
+    libpangocairo-1.0-0 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libgtk-3-0 \
+    --no-install-recommends 
+
+# Clean up to reduce layer size
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Setup the working directory
 WORKDIR /var/www/html
@@ -23,12 +46,14 @@ COPY . /var/www/html
 # Install Puppeteer locally in the project directory
 RUN npm install puppeteer@2.1.1
 
-
-# Run the image load test script
+# Ensure that the Puppeteer script will execute correctly
 RUN node imageLoadTest.js
 
-# Optional: Start a simple Python web server in the background
+# Start a simple Python web server in the background
 RUN BACKGROUND python3 -m http.server 80
+
+# Expose the website
 EXPOSE WEBSITE http://localhost:80
+
 
 
