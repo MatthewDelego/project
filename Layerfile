@@ -70,15 +70,19 @@ RUN node -e "const puppeteer = require('puppeteer'); \
         }); \
         console.log('Link Test Results:'); \
         for (const link of links) { \
-            try { \
-                const response = await page.goto(link); \
-                console.log(link + ' - Status: ' + response.status()); \
-                if (response.status() >= 400) { \
-                    throw new Error(link + ' returned status ' + response.status()); \
+            if (link.startsWith('http://localhost')) { \
+                try { \
+                    const response = await page.goto(link); \
+                    console.log(link + ' - Status: ' + response.status()); \
+                    if (response.status() >= 400) { \
+                        throw new Error(link + ' returned status ' + response.status()); \
+                    } \
+                } catch (error) { \
+                    console.error('Error with link ' + link + ': ' + error.message); \
+                    throw error; \
                 } \
-            } catch (error) { \
-                console.error('Error with link ' + link + ': ' + error.message); \
-                throw error; \
+            } else { \
+                console.log('Skipping external link: ' + link); \
             } \
         } \
         await browser.close(); \
