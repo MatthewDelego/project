@@ -11,13 +11,19 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
 # Check Node and npm versions
 RUN node -v && npm -v
 
-# Copy the repository contents to the VM
-COPY . .
+# Setup working directory
+WORKDIR /var/www/html
 
-# Create some test HTML files
-RUN echo '<b>some html</b>' > hello.html
-RUN echo '<b>another file</b>' > another.html
+# Copy the repository contents to the correct directory
+COPY . /var/www/html
+
+# Install Puppeteer locally in the project directory
+RUN npm install puppeteer
+
+# Run the image load test script
+RUN node imageLoadTest.js
 
 # Optional: Start a simple Python web server in the background
 RUN BACKGROUND python3 -m http.server 80
 EXPOSE WEBSITE http://localhost:80
+
