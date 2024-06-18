@@ -26,6 +26,12 @@ COPY . /var/www/html
 # Install Puppeteer locally in the project directory
 RUN npm install puppeteer
 
+# Start a simple Python web server in the background
+RUN python3 -m http.server 80 &
+
+# Wait for the server to start before running the Puppeteer script
+RUN sleep 5
+
 # Run the image load test script with no-sandbox option for Puppeteer
 RUN node -e "const puppeteer = require('puppeteer'); \
     (async () => { \
@@ -41,7 +47,7 @@ RUN node -e "const puppeteer = require('puppeteer'); \
         }); \
         console.log('Image Load Test Results:'); \
         images.forEach(img => { \
-            console.log(`${img.src} - Loaded: ${img.loaded}`); \
+            console.log(img.src + ' - Loaded: ' + img.loaded); \
         }); \
         await browser.close(); \
         const allLoaded = images.every(img => img.loaded); \
@@ -53,6 +59,4 @@ RUN node -e "const puppeteer = require('puppeteer'); \
         process.exit(1); \
     });"
 
-# Optional: Start a simple Python web server in the background
-RUN BACKGROUND python3 -m http.server 80
-EXPOSE WEBSITE http://localhost:80
+EXPOSE 80
