@@ -1,7 +1,9 @@
 const puppeteer = require('puppeteer');
 
 async function testImagesLoad() {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
     await page.goto('http://localhost:80'); // Adjust the URL to your testing environment
 
@@ -31,3 +33,4 @@ testImagesLoad().catch(error => {
     console.error(error);
     process.exit(1); // Exit with error for the CI to detect failure
 });
+
